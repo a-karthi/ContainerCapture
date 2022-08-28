@@ -1,0 +1,6 @@
+framework module Pods_ContainerMeasure {
+  umbrella header "Pods-ContainerMeasure-umbrella.h"
+
+  export *
+  module * { export * }
+}

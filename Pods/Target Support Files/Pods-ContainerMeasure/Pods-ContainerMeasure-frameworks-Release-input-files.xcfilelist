@@ -1,0 +1,3 @@
+${PODS_ROOT}/Target Support Files/Pods-ContainerMeasure/Pods-ContainerMeasure-frameworks.sh
+${BUILT_PRODUCTS_DIR}/AWSCore/AWSCore.framework
+${BUILT_PRODUCTS_DIR}/AWSRekognition/AWSRekognition.framework
