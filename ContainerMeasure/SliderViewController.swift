@@ -77,6 +77,8 @@ class SliderViewController: UIViewController{
         dimmedView.addGestureRecognizer(tapGesture)
         
         setupPanGesture()
+        self.dataSource = self.dataSource?.sorted(by: { $0.geometry?.boundingBox?.top?.decimalValue ?? 0.0 < $1.geometry?.boundingBox?.top?.decimalValue ?? 0.0 })
+        self.tableView.reloadData()
     }
     
     override var prefersHomeIndicatorAutoHidden: Bool {
@@ -145,6 +147,8 @@ class SliderViewController: UIViewController{
         // Activate constraints
         containerViewHeightConstraint?.isActive = true
         containerViewBottomConstraint?.isActive = true
+
+        
     }
     
     func setupPanGesture() {
