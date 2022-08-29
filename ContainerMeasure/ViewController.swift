@@ -54,8 +54,8 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     self.awsSetup()
     self.offOnBox()
     self.cropView.layer.borderColor = UIColor.yellow.cgColor
-    self.cropView.layer.borderWidth = 2
-    self.capturedImageView.layer.borderWidth = 2
+    self.cropView.layer.borderWidth = 3
+    self.capturedImageView.layer.borderWidth = 3
     self.capturedImageView.layer.borderColor = UIColor.white.cgColor
     self.capturedImageView.layer.cornerRadius = 10
     //self.cropRect = cropView.frame
@@ -272,7 +272,7 @@ extension ViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
    }
     
     func regExValidations(_ textDetctions:[AWSRekognitionTextDetection]) {
-        let confidenceDetection = textDetctions.filter({$0.types.rawValue == 1})
+        let confidenceDetection = textDetctions.filter({$0.types.rawValue == 2})
         let strArray = confidenceDetection.compactMap({$0.detectedText})
         let resStr = strArray.joined(separator: "-")
         DispatchQueue.main.async {
