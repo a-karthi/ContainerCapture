@@ -21,9 +21,7 @@ enum AWSConstants {
     
 }
 
-class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate{
-    
-  @IBOutlet weak var capturedImageView: UIImageView!
+class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
   @IBOutlet weak var cropView: UIView!
     
@@ -47,6 +45,8 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
   var boundingBox: BoundingBox = .off
     
   var takePicture = false
+    
+  var dataSource: [AWSRekognitionTextDetection]?
 
   // MARK: - Override Functions
   override func viewDidLoad() {
@@ -55,17 +55,22 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     self.offOnBox()
     self.cropView.layer.borderColor = UIColor.yellow.cgColor
     self.cropView.layer.borderWidth = 3
-    self.capturedImageView.layer.borderWidth = 3
-    self.capturedImageView.layer.borderColor = UIColor.white.cgColor
-    self.capturedImageView.layer.cornerRadius = 10
     //self.cropRect = cropView.frame
     self.cropRect = CGRect(x: self.cropView.frame.origin.x, y: self.cropView.frame.origin.y - 100, width: 80, height: self.cropView.frame.height + 100)
   }
     
+  override var prefersHomeIndicatorAutoHidden: Bool {
+        return true
+  }
+
   override func viewDidAppear(_ animated: Bool) {
     super.viewDidAppear(animated)
     checkPermissions()
     self.setupAndStartCaptureSession()
+  }
+    
+  override func viewWillAppear(_ animated: Bool) {
+      self.dataSource = nil
   }
   
   override func viewWillDisappear(_ animated: Bool) {
@@ -87,6 +92,17 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     @IBAction func switchAction(_ sender: UISwitch) {
         self.offOnBox()
+    }
+    
+    @IBAction func sliderAction(_ sender: Any) {
+        if let data = dataSource {
+            let vc = SliderViewController()
+            vc.modalPresentationStyle = .overCurrentContext
+            vc.dataSource = data
+            // keep false
+            // modal animation will be handled in VC itself
+            self.present(vc, animated: false)
+        }
     }
     
     func offOnBox() {
@@ -125,10 +141,8 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         guard let res = image.upOrientationImage() else {return}
         if boundingBox == .on {
             guard let appleCrop = self.cropImage(res, toRect: self.cropRect, viewWidth: self.view.frame.width, viewHeight: self.view.frame.height) else {return}
-            self.capturedImageView.image = appleCrop
             self.sendImageToRekognition(image: appleCrop)
         } else {
-            self.capturedImageView.image = res
             self.sendImageToRekognition(image: res)
         }
     }
@@ -240,10 +254,8 @@ extension ViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
               if self.boundingBox == .on {
                   guard let appleCrop1 = self.cropImage(rotatedImage, toRect: self.cropRect, viewWidth: self.view.frame.width, viewHeight: self.view.frame.height) else {return}
                   guard let appleCrop2 = self.cropImage(appleCrop1, toRect: self.cropRect, viewWidth: self.view.frame.width, viewHeight: self.view.frame.height) else {return}
-                  self.capturedImageView.image = appleCrop2
                   self.sendImageToRekognition(image: appleCrop2)
               } else {
-                  self.capturedImageView.image = rotatedImage
                   self.sendImageToRekognition(image: rotatedImage)
               }
           }
@@ -273,6 +285,7 @@ extension ViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
     
     func regExValidations(_ textDetctions:[AWSRekognitionTextDetection]) {
         let confidenceDetection = textDetctions.filter({$0.types.rawValue == 2})
+        self.dataSource = confidenceDetection
         let strArray = confidenceDetection.compactMap({$0.detectedText})
         let resStr = strArray.joined(separator: "-")
         DispatchQueue.main.async {
