@@ -63,7 +63,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     self.cropView.layer.borderWidth = 3
     sliderBarView.layer.cornerRadius = 3
     //self.cropRect = cropView.frame
-    self.cropRect = CGRect(x: self.cropView.frame.origin.x, y: self.cropView.frame.origin.y - 100, width: 80, height: self.cropView.frame.height + 50)
+    self.cropRect = CGRect(x: self.cropView.frame.origin.x, y: self.cropView.frame.origin.y - 100, width: 80, height: self.cropView.frame.height - 150 )
       let tap = UITapGestureRecognizer(target: self, action: #selector(self.sliderAction))
       self.sliderSwitch.addGestureRecognizer(tap)
   }
