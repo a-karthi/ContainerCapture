@@ -21,7 +21,7 @@ enum AWSConstants {
     
 }
 
-class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, SliderViewProtocol {
     
   @IBOutlet weak var cropView: UIView!
     
@@ -79,6 +79,8 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
   }
     
   override func viewWillAppear(_ animated: Bool) {
+      self.view.removeBluerLoader()
+      self.inputImage = nil
       self.dataSource = nil
   }
   
@@ -110,10 +112,17 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             vc.modalPresentationStyle = .overCurrentContext
             vc.dataSource = data
             vc.inputImage = image
+            vc.delegate = self
             // keep false
             // modal animation will be handled in VC itself
             self.present(vc, animated: false)
         }
+    }
+    
+    func closeAction() {
+        self.view.removeBluerLoader()
+        self.inputImage = nil
+        self.dataSource = nil
     }
     
     func offOnBox() {
@@ -150,10 +159,15 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             fatalError("couldn't load image from Photos")
         }
         guard let res = image.upOrientationImage() else {return}
+        DispatchQueue.main.async {
+            self.view.showBlurLoader()
+        }
         if boundingBox == .on {
             guard let appleCrop = self.cropImage(res, toRect: self.cropRect, viewWidth: self.view.frame.width, viewHeight: self.view.frame.height) else {return}
+            self.inputImage = appleCrop
             self.sendImageToRekognition(image: appleCrop)
         } else {
+            self.inputImage = res
             self.sendImageToRekognition(image: res)
         }
     }
@@ -262,6 +276,7 @@ extension ViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
           guard let rotatedImage = uiImage.upOrientationImage() else {return}
           self.takePicture = false
           DispatchQueue.main.async {
+              self.view.showBlurLoader()
               if self.boundingBox == .on {
                   guard let appleCrop1 = self.cropImage(rotatedImage, toRect: self.cropRect, viewWidth: self.view.frame.width, viewHeight: self.view.frame.height) else {return}
                   guard let appleCrop2 = self.cropImage(appleCrop1, toRect: self.cropRect, viewWidth: self.view.frame.width, viewHeight: self.view.frame.height) else {return}
@@ -323,9 +338,14 @@ extension ViewController {
   private func showAlert(withTitle title: String, message: String) {
     DispatchQueue.main.async {
       let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-      alertController.addAction(UIAlertAction(title: "Okay", style: .default))
+      let okayAction = UIAlertAction(title: "Okay", style: .default) { _ in
+          self.view.removeBluerLoader()
+          self.inputImage = nil
+          self.dataSource = nil
+      }
+      alertController.addAction(okayAction)
       let seeMoreaction  = UIAlertAction(title: "See more", style: .default) { _ in
-            self.sliderAction()
+          self.sliderAction()
       }
       alertController.addAction(seeMoreaction)
       self.present(alertController, animated: true)

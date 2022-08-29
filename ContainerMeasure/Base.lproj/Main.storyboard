@@ -37,6 +37,16 @@
                                             <action selector="switchAction:" destination="BYZ-38-t0r" eventType="valueChanged" id="wNz-pH-KsL"/>
                                         </connections>
                                     </switch>
+                                    <label opaque="NO" userInteractionEnabled="NO" alpha="0.69999999999999996" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Bounding Box" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LJR-3m-R7k">
+                                        <rect key="frame" x="314" y="13" width="100" height="16"/>
+                                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="100" id="4cW-mx-LEz"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
                                     <button opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="o7P-hC-i4g" userLabel="CameraButton">
                                         <rect key="frame" x="177" y="15" width="60" height="60"/>
                                         <constraints>
@@ -59,7 +69,7 @@
                                             <action selector="galleryAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="baX-fq-1Q1"/>
                                         </connections>
                                     </button>
-                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="e3C-8q-eoU">
+                                    <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="e3C-8q-eoU">
                                         <rect key="frame" x="0.0" y="85" width="414" height="35"/>
                                         <subviews>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="4yG-Qk-Szy">
@@ -87,9 +97,11 @@
                                     <constraint firstAttribute="trailing" secondItem="1ko-UN-6kD" secondAttribute="trailing" constant="25" id="JxK-i4-02e"/>
                                     <constraint firstItem="1ko-UN-6kD" firstAttribute="centerY" secondItem="o7P-hC-i4g" secondAttribute="centerY" id="KcC-GC-Pr3"/>
                                     <constraint firstAttribute="height" constant="120" id="QXh-uq-RkP"/>
+                                    <constraint firstItem="LJR-3m-R7k" firstAttribute="centerX" secondItem="1ko-UN-6kD" secondAttribute="centerX" id="R8d-gV-AnW"/>
                                     <constraint firstItem="Arw-pE-dPm" firstAttribute="centerY" secondItem="o7P-hC-i4g" secondAttribute="centerY" id="VfH-1R-aRD"/>
                                     <constraint firstItem="Arw-pE-dPm" firstAttribute="leading" secondItem="5PJ-Jj-qv4" secondAttribute="leading" constant="25" id="ZTs-Bm-wYZ"/>
                                     <constraint firstItem="e3C-8q-eoU" firstAttribute="top" secondItem="o7P-hC-i4g" secondAttribute="bottom" constant="10" id="cDd-Mv-l6U"/>
+                                    <constraint firstItem="1ko-UN-6kD" firstAttribute="top" secondItem="LJR-3m-R7k" secondAttribute="bottom" constant="1" id="cr0-Mk-Cmb"/>
                                     <constraint firstAttribute="bottom" secondItem="e3C-8q-eoU" secondAttribute="bottom" id="fU0-dx-Oeu"/>
                                     <constraint firstItem="o7P-hC-i4g" firstAttribute="centerX" secondItem="5PJ-Jj-qv4" secondAttribute="centerX" id="wqI-gP-XiS"/>
                                 </constraints>

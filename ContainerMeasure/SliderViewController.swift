@@ -10,7 +10,11 @@ import AWSCore
 import AWSRekognition
 import UIKit
 
-class SliderViewController: UIViewController {
+protocol SliderViewProtocol {
+    func closeAction()
+}
+
+class SliderViewController: UIViewController{
     
     private lazy var barView : UIView = {
 
@@ -29,6 +33,8 @@ class SliderViewController: UIViewController {
         return table
 
     }()
+    
+    var delegate: SliderViewProtocol?
     
     lazy var containerView: UIView = {
         let view = UIView()
@@ -233,6 +239,7 @@ class SliderViewController: UIViewController {
             self.dimmedView.alpha = 0
         } completion: { _ in
             // once done, dismiss without animation
+            self.delegate?.closeAction()
             self.dismiss(animated: false)
         }
         // hide main view by updating bottom constraint in animation block
