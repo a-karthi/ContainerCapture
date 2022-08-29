@@ -14,6 +14,11 @@ protocol SliderViewProtocol {
     func closeAction()
 }
 
+enum SeeMore {
+    case open
+    case close
+}
+
 class SliderViewController: UIViewController{
     
     private lazy var barView : UIView = {
@@ -67,6 +72,7 @@ class SliderViewController: UIViewController{
     
     var dataSource: [AWSRekognitionTextDetection]?
     var inputImage: UIImage?
+    var seeMore:SeeMore = .close
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -97,7 +103,7 @@ class SliderViewController: UIViewController{
     
     func setupView() {
         tableView.register(DisplayTableViewCell.getNib(), forCellReuseIdentifier: "DisplayTableViewCell")
-        tableView.register(ImageHeaderView.self, forHeaderFooterViewReuseIdentifier: ImageHeaderView.reuseIdentifier)
+        tableView.register(ResultDataCell.getNib(), forCellReuseIdentifier: "ResultDataCell")
         view.backgroundColor = .clear
     }
     
@@ -257,31 +263,66 @@ class SliderViewController: UIViewController{
 
 
 extension SliderViewController: UITableViewDelegate, UITableViewDataSource {
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return seeMore == .open ? 2 : 1
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.dataSource?.count ?? 0
+        switch section {
+        case 0:
+            return 1
+        case 1:
+            return self.dataSource?.count ?? 0
+        default:
+            return 0
+        }
+        
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "DisplayTableViewCell", for: indexPath) as? DisplayTableViewCell
-        if let data = self.dataSource?[indexPath.row] {
-            cell?.populateCell(data)
+        switch indexPath.section {
+        case 0:
+            let cell = tableView.dequeueReusableCell(withIdentifier: "ResultDataCell", for: indexPath) as? ResultDataCell
+            let strArray = self.dataSource?.compactMap({$0.detectedText})
+            let resStr = strArray?.joined(separator: "-")
+            cell?.resultLabel.text = resStr
+            cell?.inputImage.image = self.inputImage
+            if seeMore == .open {
+                cell?.seeMoreBtn.setTitle("Close", for: .normal)
+            } else {
+                cell?.seeMoreBtn.setTitle("See more", for: .normal)
+            }
+            cell?.seeMoreBtn.addTarget(self, action:#selector(self.seeMoreAction), for: .touchUpInside)
+            return cell ?? UITableViewCell()
+        case 1:
+            let cell = tableView.dequeueReusableCell(withIdentifier: "DisplayTableViewCell", for: indexPath) as? DisplayTableViewCell
+            if let data = self.dataSource?[indexPath.row] {
+                cell?.populateCell(data)
+            }
+            return cell ?? UITableViewCell()
+        default:
+            return UITableViewCell()
         }
-        return cell ?? UITableViewCell()
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 500
+        switch indexPath.section {
+        case 0:
+            return 400
+        case 1:
+            return 400
+        default:
+            return 0
+        }
     }
     
-    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let header = tableView.dequeueReusableHeaderFooterView(
-                withIdentifier: ImageHeaderView.reuseIdentifier) as? ImageHeaderView
-        header?.imageView.image = self.inputImage
-        return header ?? UIView()
+    @objc func seeMoreAction() {
+        if seeMore == .open {
+            seeMore = .close
+        } else {
+            seeMore = .open
+        }
+        tableView.reloadData()
     }
-    
-    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 200
-    }
-    
 }

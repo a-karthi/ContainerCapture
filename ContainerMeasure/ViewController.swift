@@ -106,16 +106,18 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     }
     
     @objc func sliderAction() {
-        if let data = dataSource,
-           let image = inputImage{
-            let vc = SliderViewController()
-            vc.modalPresentationStyle = .overCurrentContext
-            vc.dataSource = data
-            vc.inputImage = image
-            vc.delegate = self
-            // keep false
-            // modal animation will be handled in VC itself
-            self.present(vc, animated: false)
+        DispatchQueue.main.async {
+            if let data = self.dataSource,
+               let image = self.inputImage{
+                let vc = SliderViewController()
+                vc.modalPresentationStyle = .overCurrentContext
+                vc.dataSource = data
+                vc.inputImage = image
+                vc.delegate = self
+                // keep false
+                // modal animation will be handled in VC itself
+                self.present(vc, animated: false)
+            }
         }
     }
     
@@ -305,21 +307,13 @@ extension ViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
           rekognitionClient?.detectText(request) {(res,err) in
               if err == nil {
                   guard let textDetctions = res?.textDetections else {return}
-                  self.regExValidations(textDetctions)
+                  let confidenceDetection = textDetctions.filter({$0.types.rawValue == 2})
+                  self.dataSource = confidenceDetection
+                  self.sliderAction()
               }
           }
       }
    }
-    
-    func regExValidations(_ textDetctions:[AWSRekognitionTextDetection]) {
-        let confidenceDetection = textDetctions.filter({$0.types.rawValue == 2})
-        self.dataSource = confidenceDetection
-        let strArray = confidenceDetection.compactMap({$0.detectedText})
-        let resStr = strArray.joined(separator: "-")
-        DispatchQueue.main.async {
-            self.showAlert(withTitle: "Detected Text", message: resStr)
-        }
-    }
     
     func awsSetup() {
         let credentialsProvider = AWSCognitoCredentialsProvider(regionType:.USWest2,
