@@ -27,6 +27,10 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
   @IBOutlet weak var boundingBoxSwitch: UISwitch!
     
+  @IBOutlet weak var sliderSwitch: UIView!
+    
+  @IBOutlet weak var sliderBarView: UIView!
+    
   var cropRect = CGRect()
     
   // MARK: - Private Variables
@@ -47,6 +51,8 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
   var takePicture = false
     
   var dataSource: [AWSRekognitionTextDetection]?
+    
+  var inputImage: UIImage?
 
   // MARK: - Override Functions
   override func viewDidLoad() {
@@ -55,8 +61,11 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     self.offOnBox()
     self.cropView.layer.borderColor = UIColor.yellow.cgColor
     self.cropView.layer.borderWidth = 3
+    sliderBarView.layer.cornerRadius = 3
     //self.cropRect = cropView.frame
     self.cropRect = CGRect(x: self.cropView.frame.origin.x, y: self.cropView.frame.origin.y - 100, width: 80, height: self.cropView.frame.height + 100)
+      let tap = UITapGestureRecognizer(target: self, action: #selector(self.sliderAction))
+      self.sliderSwitch.addGestureRecognizer(tap)
   }
     
   override var prefersHomeIndicatorAutoHidden: Bool {
@@ -94,11 +103,13 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         self.offOnBox()
     }
     
-    @IBAction func sliderAction(_ sender: Any) {
-        if let data = dataSource {
+    @objc func sliderAction() {
+        if let data = dataSource,
+           let image = inputImage{
             let vc = SliderViewController()
             vc.modalPresentationStyle = .overCurrentContext
             vc.dataSource = data
+            vc.inputImage = image
             // keep false
             // modal animation will be handled in VC itself
             self.present(vc, animated: false)
@@ -254,8 +265,10 @@ extension ViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
               if self.boundingBox == .on {
                   guard let appleCrop1 = self.cropImage(rotatedImage, toRect: self.cropRect, viewWidth: self.view.frame.width, viewHeight: self.view.frame.height) else {return}
                   guard let appleCrop2 = self.cropImage(appleCrop1, toRect: self.cropRect, viewWidth: self.view.frame.width, viewHeight: self.view.frame.height) else {return}
+                  self.inputImage = appleCrop2
                   self.sendImageToRekognition(image: appleCrop2)
               } else {
+                  self.inputImage = rotatedImage
                   self.sendImageToRekognition(image: rotatedImage)
               }
           }
@@ -311,6 +324,10 @@ extension ViewController {
     DispatchQueue.main.async {
       let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
       alertController.addAction(UIAlertAction(title: "Okay", style: .default))
+      let seeMoreaction  = UIAlertAction(title: "See more", style: .default) { _ in
+            self.sliderAction()
+      }
+      alertController.addAction(seeMoreaction)
       self.present(alertController, animated: true)
     }
   }

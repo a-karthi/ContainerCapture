@@ -4,7 +4,6 @@
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="20020"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
-        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -17,9 +16,23 @@
                 <rect key="frame" x="0.0" y="0.0" width="338" height="92"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="skn-a1-nnw">
+                    <view alpha="0.75" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="skn-a1-nnw">
                         <rect key="frame" x="5" y="5" width="328" height="82"/>
-                        <color key="backgroundColor" systemColor="systemMintColor"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mz9-Df-8wD">
+                                <rect key="frame" x="0.0" y="0.0" width="328" height="82"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="mz9-Df-8wD" firstAttribute="top" secondItem="skn-a1-nnw" secondAttribute="top" id="LbC-lB-zCG"/>
+                            <constraint firstItem="mz9-Df-8wD" firstAttribute="leading" secondItem="skn-a1-nnw" secondAttribute="leading" id="RT3-zj-Eyo"/>
+                            <constraint firstAttribute="bottom" secondItem="mz9-Df-8wD" secondAttribute="bottom" id="fX8-uI-IwH"/>
+                            <constraint firstAttribute="trailing" secondItem="mz9-Df-8wD" secondAttribute="trailing" id="hte-wQ-cFH"/>
+                        </constraints>
                     </view>
                 </subviews>
                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -31,12 +44,10 @@
                 </constraints>
             </tableViewCellContentView>
             <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
+            <connections>
+                <outlet property="infoLabel" destination="mz9-Df-8wD" id="7Lo-Ej-d99"/>
+            </connections>
             <point key="canvasLocation" x="346.37681159420293" y="34.821428571428569"/>
         </tableViewCell>
     </objects>
-    <resources>
-        <systemColor name="systemMintColor">
-            <color red="0.0" green="0.7803921568627451" blue="0.74509803921568629" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-        </systemColor>
-    </resources>
 </document>

@@ -23,7 +23,7 @@ class SliderViewController: UIViewController {
     
     private lazy var tableView : UITableView = {
 
-        let table = customTableView(.plain, self, self)
+        let table = customTableView(.group, self, self)
         table.backgroundColor = .clear
         table.isScrollEnabled = true
         return table
@@ -60,6 +60,7 @@ class SliderViewController: UIViewController {
     var containerViewBottomConstraint: NSLayoutConstraint?
     
     var dataSource: [AWSRekognitionTextDetection]?
+    var inputImage: UIImage?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -88,6 +89,7 @@ class SliderViewController: UIViewController {
     
     func setupView() {
         tableView.register(DisplayTableViewCell.getNib(), forCellReuseIdentifier: "DisplayTableViewCell")
+        tableView.register(ImageHeaderView.self, forHeaderFooterViewReuseIdentifier: ImageHeaderView.reuseIdentifier)
         view.backgroundColor = .clear
     }
     
@@ -250,12 +252,25 @@ extension SliderViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "DisplayTableViewCell", for: indexPath) as? DisplayTableViewCell
+        if let data = self.dataSource?[indexPath.row] {
+            cell?.populateCell(data)
+        }
         return cell ?? UITableViewCell()
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 300
+        return 500
     }
     
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let header = tableView.dequeueReusableHeaderFooterView(
+                withIdentifier: ImageHeaderView.reuseIdentifier) as? ImageHeaderView
+        header?.imageView.image = self.inputImage
+        return header ?? UIView()
+    }
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 200
+    }
     
 }
